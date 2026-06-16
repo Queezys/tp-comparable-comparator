@@ -16,3 +16,13 @@ Respuesta: Si quisieramos hacer los 4 ordenamientos con Comparable, tendríamos 
 
 El Principio de Responsabilidad Única(SRP) dice que no tenemos que sobrecargar de responsabilidades a la clase Estudiantes cuya responsabilidad es modelar la entidad del dominio y terminaria haciendose cargo de manejar la logica y control de la estrategia de negocio.
 El principio Abierto/Cerrado (OCP) dice que si quisieramos agregar una funcionalidad como un nuevo ordenamiento, no tenemos que "abrir" la clase para modificarla, sino que la tenemos que extender, en este caso con comparable tendriamos que abrir la clase una y otra vez para agregar un ordenamiento nuevo en lugar de simplemente extenderlo.
+
+### Pregunta 4: Explicá con tus palabras qué es un overflow de enteros, por qué el "truco de la resta" lo provoca, qué parte del contrato de Comparator rompe, y por qué Integer.compare() no sufre este problema.
+
+El overflow o desbordamiento ocurre al pasar el límite, en este caso, del int. el int utiliza 32 bits de memoria para almacenar valores. Esto significa que tiene un rango limitado: el número más chico que puede guardar es -2147483648 y el más grande es 2147483647 (Integer.MAX_VALUE). Cuando se resta 2147483647 - (-1) pasa ese límite y da la vuelta al otro extremo, es decir al extremo negativo y queda -2147483647.
+
+El contrato del comparator dice que si 'e1' es mayor a 'e2' el metodo tiene que devolver un número positivo.
+Como se produce desbordamiento el método interpreta que es un negativo por lo tanto lo toma como menor.
+
+El integer.compare() no se rompe porque no realiza restas, su codigo es el siguiente:
+return (x < y) ? -1 : ((x == y) ? 0 : 1); hace comparaciones.
