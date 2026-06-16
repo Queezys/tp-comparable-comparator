@@ -1,7 +1,10 @@
 package ar.edu.unlar.prog3.tp_comparable_comparator.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,19 @@ import jakarta.annotation.PostConstruct;
 public class EstudianteService {
 
     private final List<Estudiante> estudiantes = new ArrayList<>();
+
+    //Mapa para guardar las estrategias
+    private final Map<String, Comparator<Estudiante>> estrategiasOrdeniamiento = new HashMap<>();
+
+    //Constructor
+    public EstudianteService(){
+        estrategiasOrdeniamiento.put("promedio", Comparator.comparingDouble(Estudiante::getPromedio));
+        estrategiasOrdeniamiento.put("edad", Comparator.comparingInt(Estudiante::getEdad));
+        estrategiasOrdeniamiento.put("nombre", Comparator.comparing(Estudiante::getNombre));
+        estrategiasOrdeniamiento.put("materiasAprobadas", Comparator.comparingInt(Estudiante::getCantidadMateriasAprobadas));
+        estrategiasOrdeniamiento.put("legajo", Comparator.comparing(Estudiante::getLegajo));
+    }
+
 
     @PostConstruct
     public void EstudianteServices(){
@@ -29,5 +45,31 @@ public class EstudianteService {
 
     public List<Estudiante> all(){
         return new ArrayList<>(estudiantes);
+    }
+
+    public List<Estudiante> ordenar(List<Estudiante> lista, String sortBy, String order){
+
+        Comparator<Estudiante> comparator = estrategiasOrdeniamiento.get(sortBy.toLowerCase());
+
+        if (comparator == null) {
+            throw new IllegalArgumentException("El criterio no existe.");
+        }
+
+        List<Estudiante> resultado = new ArrayList<>(lista);
+
+        if ("desc".equalsIgnoreCase(order)) {
+            comparator = comparator.reversed();
+        }
+
+        //Desempate por legajo
+        comparator = comparator.thenComparing(Estudiante::getLegajo);
+
+        resultado.sort(comparator);
+
+        return resultado;
+    }
+
+    public List<String> getCriteriosAceptados(){
+        return new ArrayList<>(estrategiasOrdeniamiento.keySet());
     }
 }

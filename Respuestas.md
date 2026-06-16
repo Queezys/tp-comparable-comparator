@@ -26,3 +26,13 @@ Como se produce desbordamiento el método interpreta que es un negativo por lo t
 
 El integer.compare() no se rompe porque no realiza restas, su codigo es el siguiente:
 return (x < y) ? -1 : ((x == y) ? 0 : 1); hace comparaciones.
+
+
+### Pregunta 5: ¿Qué patrón de diseño estás aplicando al usar un Map<String, Comparator<T>> en lugar de un switch? Explicá cómo se relaciona este patrón con el polimorfismo y por qué es preferible a la alternativa procedimental.
+
+Respuesta: Al usar un Map se aplica el patron Strategy. Se relaciona con el polimorfismo porque cuando se ejecuta la acción se la delega a la interfaz Comparator.
+Por polimorfismo a sort() no le interesa sabe que atributo está leyendo, solo ejecuta el método
+compare correspondiente a la instancia concreta que saca del Map
+La procedimental satura el método con bloques de control que crecen cuando añadimos una nueva propiedad,
+violando el principio de Abierto/Cerrado. En cambio con el map solo es una línea y desacopla la lógica de 
+negocio y si queremos extender las formas de ordenamiento simplemente la añadimos al map.
